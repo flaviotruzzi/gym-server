@@ -10,6 +10,10 @@ This project provide a rest api for [gym](https://github.com/openai/gym) using d
 ➜  gym-server git:(master) ✗ docker build -t gym-server:latest .
 ```
 
+OR
+
+Pull the image form docker hub: flaviotruzzi/gym-server:latest
+
 ## Usage
 
 Run with:
