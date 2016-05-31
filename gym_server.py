@@ -1,6 +1,8 @@
-import gym
-from flask import Flask, jsonify
 import os
+import gym
+from flask import Flask, jsonify, render_template, request, send_file
+from cStringIO import StringIO
+from PIL import Image
 
 
 environment = os.environ['GYM_ENV']
@@ -9,7 +11,7 @@ environment = os.environ['GYM_ENV']
 env = gym.make(environment)
 
 
-app = Flask(__name__)
+cached_image = None
 
 
 class InvalidUsage(Exception):
@@ -26,6 +28,25 @@ class InvalidUsage(Exception):
         rv = dict(self.payload or ())
         rv['message'] = self.message
         return rv
+
+
+def get_render_mode(environ):
+    if 'rgb_array' in environ.metadata['render.modes']:
+        return 'rgb_array'
+    elif 'ansi' in environ.metadata['render.modes']:
+        return 'ansi'
+    else:
+        return None
+
+
+def save_img(img):
+    im = Image.fromarray(img)
+    im.save("simulation.png")
+
+
+render_mode = get_render_mode(env)
+
+app = Flask(__name__)
 
 
 @app.errorhandler(InvalidUsage)
@@ -51,8 +72,16 @@ def step(action):
     :param action: Integer value representing the action.
     :return:
     """
+    global cached_image
+    render = request.args.get('render')
+
     try:
         observation, reward, done, info = env.step(action)
+
+        if render:
+            save_img(env.render(render_mode))
+
+
         return jsonify({
             'observation': observation.tolist(),
             'reward': reward,
@@ -79,7 +108,7 @@ def info():
     })
 
 
-@app.route("/")
+@app.route("/help")
 def readme():
     """
     :return: Friendly start message.
@@ -96,4 +125,15 @@ def readme():
     })
 
 
-app.run(host='0.0.0.0')
+@app.route("/")
+def index():
+    return render_template('index.html')
+
+
+@app.route("/render")
+def render():
+    return send_file("simulation.png")
+
+
+if __name__ == '__main__':
+    app.run(host="0.0.0.0")
