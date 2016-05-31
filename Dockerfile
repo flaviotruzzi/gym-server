@@ -15,7 +15,9 @@ WORKDIR /app
 
 RUN pip install -r requirements.txt
 
-EXPOSE 5000
+EXPOSE 5000 8000
+
+ENV ON_DOCKER 1
 
 ENTRYPOINT ["/bin/bash"]
 

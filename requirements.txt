@@ -1,4 +1,3 @@
 gym
 flask
-flask-socketio
 pillow

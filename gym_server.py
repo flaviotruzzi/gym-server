@@ -1,17 +1,12 @@
 import os
-import gym
-from flask import Flask, jsonify, render_template, request, send_file
-from cStringIO import StringIO
-from PIL import Image
 
+import gym
+from PIL import Image
+from flask import Flask, jsonify, render_template, request, send_file
 
 environment = os.environ['GYM_ENV']
 
-
 env = gym.make(environment)
-
-
-cached_image = None
 
 
 class InvalidUsage(Exception):
@@ -62,7 +57,9 @@ def reset():
     Reset environment.
     :return: first observation
     """
-    return jsonify({'observation': env.reset().tolist()})
+    data = env.reset().tolist()
+    save_img(env.render(render_mode))
+    return jsonify({'observation': data})
 
 
 @app.route("/step/<int:action>")
@@ -72,7 +69,6 @@ def step(action):
     :param action: Integer value representing the action.
     :return:
     """
-    global cached_image
     render = request.args.get('render')
 
     try:
@@ -80,7 +76,6 @@ def step(action):
 
         if render:
             save_img(env.render(render_mode))
-
 
         return jsonify({
             'observation': observation.tolist(),
@@ -113,6 +108,7 @@ def readme():
     """
     :return: Friendly start message.
     """
+
     def parse_doc(function):
         return function.__doc__.strip().split('\n')[0]
 
@@ -123,16 +119,6 @@ def readme():
             "/info": parse_doc(info)
         }
     })
-
-
-@app.route("/")
-def index():
-    return render_template('index.html')
-
-
-@app.route("/render")
-def render():
-    return send_file("simulation.png")
 
 
 if __name__ == '__main__':

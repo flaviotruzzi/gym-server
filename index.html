@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!--<meta http-equiv="refresh" content="0.03" >-->
+    <title>Title</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+    <script>
+        $(document).ready(function(){
+          setInterval(function() {
+            $("#imagem").attr("src", "http://localhost:8000/simulation.png?" + Math.random());
+          }, 500);
+        });
+    </script>
+</head>
+<body>
+<img id="imagem" src="http://localhost:8000/simulation.png">
+</body>
+</html>
