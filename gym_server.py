@@ -116,7 +116,8 @@ def readme():
         'available_commands': {
             "/reset": parse_doc(reset),
             "/step/<int:action>": parse_doc(step),
-            "/info": parse_doc(info)
+            "/info": parse_doc(info),
+            "/help": parse_doc(readme)
         }
     })
 
