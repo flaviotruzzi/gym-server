@@ -8,6 +8,9 @@ class EnvironmentManager(object):
 
     Control the environments that will be handled by the server.
     """
+
+    TRAINING_DIRECTORY = "monitor/{}"
+
     def __init__(self):
         self.envs = {}
         self.id_len = 8
@@ -34,7 +37,7 @@ class EnvironmentManager(object):
         obs = env.reset()
         return env.observation_space.to_jsonable(obs)
 
-    def step(self, instance_id, action):
+    def step(self, instance_id, action, render=False):
         """
         Execute action given by agent on the given environment
         :param instance_id: instance id of the environment
@@ -45,19 +48,16 @@ class EnvironmentManager(object):
 
         action_from_json = int(env.action_space.from_jsonable(action))
 
-        try:
-            observation, reward, done, info = env.step(action_from_json)
+        observation, reward, done, info = env.step(action_from_json)
 
-            environment_response = {
-                'observation': env.observation_space.to_jsonable(observation),
-                'reward': reward,
-                'done': done,
-                'info': info
-            }
+        environment_response = {
+            'observation': env.observation_space.to_jsonable(observation),
+            'reward': reward,
+            'done': done,
+            'info': info
+        }
 
-            return environment_response
-        except gym.error.ResetNeeded as ex:
-            return {'error': ex.message}
+        return environment_response
 
     def monitor_start(self, instance_id, force, resume):
         """
@@ -73,7 +73,7 @@ class EnvironmentManager(object):
         """
         env = self.envs[instance_id]
 
-        directory = "monitor/{}".format(instance_id)
+        directory = EnvironmentManager.TRAINING_DIRECTORY.format(instance_id)
 
         env.monitor.start(directory, force=force, resume=resume)
 
@@ -86,23 +86,39 @@ class EnvironmentManager(object):
         env = self.envs[instance_id]
         env.monitor.close()
 
+    def upload(self, instance_id, algorithm_id, writeup, api_key, ignore_open_monitors):
+        """
+        Upload training information created with monitor.
+        :param instance_id: Id of the environment that was trained.
+        :param algorithm_id: An arbitrary string indicating the paricular version of the algorithm
+               (including choices of parameters) you are running.
+        :param writeup: A Gist URL (of the form https://gist.github.com/<user>/<id>)
+                        containing your writeup for this evaluation.
+        :param api_key:  Your OpenAI API key. Can also be provided as an environment variable (OPENAI_GYM_API_KEY).
+        :param ignore_open_monitors: Ignore open monitors when uploading.
+        :return:
+        """
+        directory = EnvironmentManager.TRAINING_DIRECTORY.format(instance_id)
+
+        gym.upload(directory, algorithm_id, writeup, api_key,
+                   ignore_open_monitors)
+
+    def info(self, instance_id):
+        """
+        Expose useful information, such as: action_space, and observation_space.
+        :param instance_id:
+        :return:
+        """
+        env = self.envs[instance_id]
+        return {
+            'action_space': str(env.action_space),
+            'observation_space': {
+                'shape': env.observation_space.shape,
+                'low': env.observation_space.low.tolist(),
+                'high': env.observation_space.high.tolist()
+            }
+        }
+
     def render(self, instance_id):
-        env = self.envs[self.envs]
+        raise NotImplementedError()
 
-        render_mode = get_render_mode(env)
-
-
-
-
-def get_render_mode(environ):
-    if 'rgb_array' in environ.metadata['render.modes']:
-        return 'rgb_array'
-    elif 'ansi' in environ.metadata['render.modes']:
-        return 'ansi'
-    else:
-        return None
-
-
-def save_img(img):
-    im = Image.fromarray(img)
-    im.save("simulation.png")
