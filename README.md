@@ -1,6 +1,6 @@
 # gym-server
 
-This project provide a rest api for [gym](https://github.com/openai/gym) using docker.
+This project provide a rest API for [gym](https://github.com/openai/gym).
 The aim is to provide a simple way to build and test RL algorithms in other languages than python.
 
 Stay tunned for the first client that uses this: [scala-gym](https://github.com/flaviotruzzi/scala-gym)
@@ -30,7 +30,7 @@ Pull the image form docker hub: flaviotruzzi/gym-server:latest
 
 ### Help
 ```bash
-➜  gym-server git:(master) ✗ curl http://192.168.99.100:5000/v1/help
+➜  gym-server git:(master) ✗ curl http://localhost:5000/v1/help
 ```
 ```json
 {
@@ -76,7 +76,7 @@ Pull the image form docker hub: flaviotruzzi/gym-server:latest
 Create an Environment, return the instance id.
 
 ```bash
-curl -H "Content-Type: application/json" -XPOST http://192.168.99.100:5000/v1/envs/create/ -d '{"environment": "CartPole-v0"}'
+curl -H "Content-Type: application/json" -XPOST http://localhost:5000/v1/envs/create/ -d '{"environment": "CartPole-v0"}'
 ```
 ```json
 {
@@ -89,7 +89,7 @@ curl -H "Content-Type: application/json" -XPOST http://192.168.99.100:5000/v1/en
 Reset the environment, and generate an image of the current state.
 
 ```bash
-➜  gym-server git:(master) ✗ curl  -XPOST -H "Content-Type: application/json" http://192.168.99.100:5000/v1/envs/ce2dbb50/reset/ -d '{"render": true}'
+➜  gym-server git:(master) ✗ curl  -XPOST -H "Content-Type: application/json" http://localhost:5000/v1/envs/ce2dbb50/reset/ -d '{"render": true}'
 ```
 ```json
 {
@@ -110,7 +110,7 @@ Reset the environment, and generate an image of the current state.
 Execute one step passing an action.
 
 ```bash
-curl -XPOST -H "Content-Type: application/json" http://192.168.99.100:5000/v1/envs/ce2dbb50/step/ -d '{"action": true}'
+curl -XPOST -H "Content-Type: application/json" http://localhost:5000/v1/envs/ce2dbb50/step/ -d '{"action": 1}'
 ```
 ```json
 {
@@ -135,7 +135,7 @@ The artifacts generated through the monitor are available through port 8000.
 Start monitoring.
 
 ```bash
-curl -XPOST -H "Content-Type: application/json" http://192.168.99.100:5000/v1/envs/ce2dbb50/monitor/start/ -d '{"force": false, "resume": false}'
+curl -XPOST -H "Content-Type: application/json" http://localhost:5000/v1/envs/ce2dbb50/monitor/start/ -d '{"force": false, "resume": false}'
 {
   "message": true
 }%
@@ -146,7 +146,7 @@ curl -XPOST -H "Content-Type: application/json" http://192.168.99.100:5000/v1/en
 Stop monitoring.
 
 ```bash
-curl -XPOST -H "Content-Type: application/json" http://192.168.99.100:5000/v1/envs/ce2dbb50/monitor/stop/
+curl -XPOST -H "Content-Type: application/json" http://localhost:5000/v1/envs/ce2dbb50/monitor/stop/
 {
   "message": true
 }%
@@ -157,7 +157,7 @@ curl -XPOST -H "Content-Type: application/json" http://192.168.99.100:5000/v1/en
 Upload results stored by the monitoring.
 
 ```bash
-curl -XPOST -H "Content-Type: application/json" http://192.168.99.100:5000/v1/envs/ce2dbb50/upload/ -d '{"algorithm_id": "my_id", "writeup": "http://mygist", "api_key": "my_apikey",_ "ignore_open_monitors": true}'
+curl -XPOST -H "Content-Type: application/json" http://localhost:5000/v1/envs/ce2dbb50/upload/ -d '{"algorithm_id": "my_id", "writeup": "http://mygist", "api_key": "my_apikey",_ "ignore_open_monitors": true}'
 {
   "message": true
 }%
@@ -168,7 +168,7 @@ curl -XPOST -H "Content-Type: application/json" http://192.168.99.100:5000/v1/en
 Provide some information about the environment, such as, action space and observation space.
 
 ```bash
-➜  gym-server git:(master) ✗ curl -XGET -H "Content-Type: application/json" http://192.168.99.100:5000/v1/envs/ce2dbb50/info
+➜  gym-server git:(master) ✗ curl -XGET -H "Content-Type: application/json" http://localhost:5000/v1/envs/ce2dbb50/info
 {
   "action_space": "Discrete(2)",
   "observation_space": {
@@ -193,11 +193,11 @@ Provide some information about the environment, such as, action space and observ
 
 ## Accessing the generated images and videos.
 
-The images generated are available at: http://192.168.99.100:8000/ce2dbb50/rendered/
+The images generated are available at: http://localhost:8000/ce2dbb50/rendered/
 
-The files of your simulation are available at: http://192.168.99.100:8000/ce2dbb50/simulation/
+The files of your simulation are available at: http://localhost:8000/ce2dbb50/simulation/
 
-You can also access http://192.168.99.100:8000/render.html?instance_id=ce2dbb50, this is updated every 500ms showing the last generated image.
+You can also access http://localhost:8000/render.html?instance_id=ce2dbb50, this is updated every 500ms showing the last generated image.
 
 *Note that all ips depends where your docker is running or if you are running it locally.*
 
@@ -210,6 +210,7 @@ You can also access http://192.168.99.100:8000/render.html?instance_id=ce2dbb50,
     [ ] - java
     [ ] - go
     [ ] - want another one? You can also contribute ;)
+* Ideas? Create an issue!
 
 ## Contributing
 
