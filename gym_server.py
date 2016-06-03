@@ -31,15 +31,20 @@ def create_environment():
     return jsonify(instance_id=instance_id), 201
 
 
-@app.route('/v1/envs/<instance_id>/reset/', methods=['GET'])
+@app.route('/v1/envs/<instance_id>/reset/', methods=['POST'])
 def reset(instance_id):
     """
-    Reset environment.
+    Reset environment. Accept json to say if it should render or not.
+
+    {
+      "render": false
+    }
 
     :param instance_id:
     :return: first observation
     """
-    return jsonify(observation=envs.reset(instance_id))
+    render = request.get_json().get('render')
+    return jsonify(observation=envs.reset(instance_id, render))
 
 
 @app.route('/v1/envs/<instance_id>/step/', methods=['POST'])
@@ -89,8 +94,7 @@ def monitor_start(instance_id):
     resume = request_data.get('resume', False)
 
     envs.monitor_start(instance_id, force, resume)
-    # NOTE: no video_callable implemented yet
-    return '', 204
+    return jsonify(message=True)
 
 
 @app.route('/v1/envs/<instance_id>/monitor/close/', methods=['POST'])
@@ -101,7 +105,7 @@ def monitor_close(instance_id):
     :return:
     """
     envs.monitor_close(instance_id)
-    return '', 204
+    return jsonify(message=True)
 
 
 @app.route('/v1/envs/<instance_id>/upload/', methods=['POST'])
@@ -121,7 +125,7 @@ def upload(instance_id):
 
         envs.upload(instance_id, algorithm_id, writeup, api_key, ignore_open_monitors)
 
-        return '', 204
+        return jsonify(message=True)
     except Exception as ex:
         raise InvalidUsage(ex.message)
 
@@ -142,13 +146,13 @@ def readme():
     """
 
     def parse_doc(function):
-        return function.__doc__.strip().split('\n')[0]
+        return function.__doc__.strip()
 
     def parse_methods(methods):
         return ','.join(methods)
 
     return jsonify({
-        'available_commands': {
+        'v1': {
             rule.rule: {
                 'methods': parse_methods(rule.methods), 'doc': parse_doc(globals()[rule.endpoint])
             } for rule in app.url_map.iter_rules() if rule.endpoint != 'static'}})

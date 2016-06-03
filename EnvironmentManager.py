@@ -33,21 +33,31 @@ class EnvironmentManager(object):
         self.envs[instance_id] = env
         return instance_id
 
-    def reset(self, instance_id):
+    def reset(self, instance_id, render=False):
         """
         Reset state of a given instance id.
         :param instance_id:
+        :param render: render result of this operation.
         :return: Array of observations.
         """
         env = self.envs[instance_id]
-        obs = env.reset()
-        return env.observation_space.to_jsonable(obs)
+        initial_state = {'observation': env.observation_space.to_jsonable(env.reset())}
+        try:
+            if render:
+                self.render(instance_id)
+                initial_state['render'] = 'successfully rendered: {}.png'.format(
+                        self.render_counter[instance_id])
+        except Exception as e:
+            initial_state['render'] = 'Error: {}'.format(e.message)
+
+        return initial_state
 
     def step(self, instance_id, action, render=False):
         """
         Execute action given by agent on the given environment
         :param instance_id: instance id of the environment
         :param action: action
+        :param render: render result of this operation.
         :return: Dictionary with observation, reward, done flag and info.
         """
         env = self.envs[instance_id]
