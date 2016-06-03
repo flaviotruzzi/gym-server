@@ -141,4 +141,4 @@ You can also access http://192.168.99.100:8000, this is updated every 500ms show
 
 # Contributors
 
-- @catherio: idea of EnvironmentManager, and most of its implementation. Also a lot of influence on the api.
+- @catherio: idea of EnvironmentManager, and most of its implementation. Also a lot of influence on the API.
