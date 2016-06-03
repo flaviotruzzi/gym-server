@@ -7,14 +7,18 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
     <script>
+        var instance_id = location.search.split('=')[1]
+        $("#imagem").attr("src", "http://localhost:8000/" + instance_id + "/rendered/latest.png?" + Math.random());
+
         $(document).ready(function(){
           setInterval(function() {
-            $("#imagem").attr("src", "http://localhost:8000/simulation.png?" + Math.random());
+            var instance_id = location.search.split('=')[1]
+            $("#imagem").attr("src", "http://localhost:8000/" + instance_id + "/rendered/latest.png?" + Math.random());
           }, 500);
         });
     </script>
 </head>
 <body>
-<img id="imagem" src="http://localhost:8000/simulation.png">
+<img id="imagem" src="">
 </body>
 </html>

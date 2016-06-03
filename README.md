@@ -191,18 +191,25 @@ Provide some information about the environment, such as, action space and observ
 }%
 ```
 
-## Accessing the generated images.
+## Accessing the generated images and videos.
 
-The last image generated is always available on: http://192.168.99.100:8000/simulation.png.
+The images generated are available at: http://192.168.99.100:8000/ce2dbb50/rendered/
 
-You can also access http://192.168.99.100:8000, this is updated every 500ms showing the last generated image.
+The files of your simulation are available at: http://192.168.99.100:8000/ce2dbb50/simulation/
 
-*Note that all ips depends where your docker is running.*
+You can also access http://192.168.99.100:8000/render.html?instance_id=ce2dbb50, this is updated every 500ms showing the last generated image.
+
+*Note that all ips depends where your docker is running or if you are running it locally.*
 
 ## Future
 
-* Provide API for recording episodes.
-* Provide API to submit simulation to OpenAI.
+* Provide API for getting statistics of simulation
+* Provide clients:
+    [ ] - scala (in progress)
+    [ ] - python
+    [ ] - java
+    [ ] - go
+    [ ] - want another one? You can also contribute ;)
 
 ## Contributing
 

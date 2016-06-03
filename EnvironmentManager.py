@@ -14,7 +14,7 @@ class EnvironmentManager(object):
     """
 
     TRAINING_DIRECTORY = "monitor/{}/simulation"
-    RENDER_DIRECTORY = TRAINING_DIRECTORY + "/rendered/"
+    RENDER_DIRECTORY = "monitor/{}/rendered/"
 
     def __init__(self):
         self.envs = {}
@@ -169,5 +169,6 @@ class EnvironmentManager(object):
 
         img = Image.fromarray(env.render(render_mode))
         img.save(directory + "{}.png".format(self.render_counter[instance_id]))
+        img.save(directory + "latest.png".format(self.render_counter[instance_id]))
 
         self.render_counter[instance_id] += 1

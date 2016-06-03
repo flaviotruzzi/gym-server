@@ -25,8 +25,8 @@ cleanup() {
 
 if [ -v ON_DOCKER ]
 then
-    python -m SimpleHTTPServer & xvfb-run -s "-screen 0 1400x900x24" python gym_server.py
+    (cd monitor && python -m SimpleHTTPServer) & xvfb-run -s "-screen 0 1400x900x24" python gym_server.py
 else
-    python -m SimpleHTTPServer & python gym_server.py
+    (cd monitor && python -m SimpleHTTPServer) & python gym_server.py
 fi
 
