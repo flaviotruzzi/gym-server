@@ -1,5 +1,9 @@
+import os
 import uuid
+from collections import defaultdict
+
 import gym
+from PIL import Image
 
 
 class EnvironmentManager(object):
@@ -9,10 +13,12 @@ class EnvironmentManager(object):
     Control the environments that will be handled by the server.
     """
 
-    TRAINING_DIRECTORY = "monitor/{}"
+    TRAINING_DIRECTORY = "monitor/{}/simulation"
+    RENDER_DIRECTORY = TRAINING_DIRECTORY + "/rendered/"
 
     def __init__(self):
         self.envs = {}
+        self.render_counter = defaultdict(int)
         self.id_len = 8
 
     def create(self, env_id):
@@ -57,6 +63,14 @@ class EnvironmentManager(object):
             'info': info
         }
 
+        try:
+            if render:
+                self.render(instance_id)
+                environment_response['render'] = 'successfully rendered: {}.png'.format(
+                        self.render_counter[instance_id])
+        except Exception as e:
+            environment_response['render'] = 'Error: {}'.format(e.message)
+
         return environment_response
 
     def monitor_start(self, instance_id, force, resume):
@@ -73,7 +87,7 @@ class EnvironmentManager(object):
         """
         env = self.envs[instance_id]
 
-        directory = EnvironmentManager.TRAINING_DIRECTORY.format(instance_id)
+        directory = self.TRAINING_DIRECTORY.format(instance_id)
 
         env.monitor.start(directory, force=force, resume=resume)
 
@@ -98,7 +112,7 @@ class EnvironmentManager(object):
         :param ignore_open_monitors: Ignore open monitors when uploading.
         :return:
         """
-        directory = EnvironmentManager.TRAINING_DIRECTORY.format(instance_id)
+        directory = self.TRAINING_DIRECTORY.format(instance_id)
 
         gym.upload(directory, algorithm_id, writeup, api_key,
                    ignore_open_monitors)
@@ -120,5 +134,30 @@ class EnvironmentManager(object):
         }
 
     def render(self, instance_id):
-        raise NotImplementedError()
+        """
+        Take a screenshot of the simulation.
 
+        :param instance_id: id of the environment.
+        :return:
+        """
+        env = self.envs[instance_id]
+
+        if 'rgb_array' in env.metadata['render.modes']:
+            render_mode = 'rgb_array'
+        elif 'ansi' in env.metadata['render.modes']:
+            render_mode = 'ansi'
+        else:
+            render_mode = None
+
+        if render_mode is None:
+            raise Exception("Environment does not support 'rgb_array' or 'ansi' renders.")
+
+        directory = self.RENDER_DIRECTORY.format(instance_id)
+
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+
+        img = Image.fromarray(env.render(render_mode))
+        img.save(directory + "{}.png".format(self.render_counter[instance_id]))
+
+        self.render_counter[instance_id] += 1
