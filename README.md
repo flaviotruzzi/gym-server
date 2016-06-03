@@ -14,11 +14,13 @@ Stay tunned for the first client that uses this: [scala-gym](https://github.com/
 ➜  gym-server git:(master) ✗ ./start.sh
 ```
 
-- Using docker:
+### Using docker:
 
 Pull the image form docker hub: flaviotruzzi/gym-server:latest
 
-- Building docker:
+Running: `docker run -p 5000:5000 -p 8000:8000 -it flaviotruzzi/gym-server:latest`
+
+### Building docker:
 
 1. Install docker.
 2. Build docker image with:
@@ -76,7 +78,9 @@ Pull the image form docker hub: flaviotruzzi/gym-server:latest
 Create an Environment, return the instance id.
 
 ```bash
-curl -H "Content-Type: application/json" -XPOST http://localhost:5000/v1/envs/create/ -d '{"environment": "CartPole-v0"}'
+➜  gym-server git:(master) ✗ curl -H "Content-Type: application/json" \
+                         -XPOST http://localhost:5000/v1/envs/create/ \ 
+                         -d '{"environment": "CartPole-v0"}'
 ```
 ```json
 {
@@ -89,7 +93,9 @@ curl -H "Content-Type: application/json" -XPOST http://localhost:5000/v1/envs/cr
 Reset the environment, and generate an image of the current state.
 
 ```bash
-➜  gym-server git:(master) ✗ curl  -XPOST -H "Content-Type: application/json" http://localhost:5000/v1/envs/ce2dbb50/reset/ -d '{"render": true}'
+➜  gym-server git:(master) ✗ curl  -XPOST -H "Content-Type: application/json" \
+                                http://localhost:5000/v1/envs/ce2dbb50/reset/ \
+                                -d '{"render": true}'
 ```
 ```json
 {
@@ -110,7 +116,9 @@ Reset the environment, and generate an image of the current state.
 Execute one step passing an action.
 
 ```bash
-curl -XPOST -H "Content-Type: application/json" http://localhost:5000/v1/envs/ce2dbb50/step/ -d '{"action": 1}'
+➜  gym-server git:(master) ✗ curl -XPOST -H "Content-Type: application/json" \
+                                http://localhost:5000/v1/envs/ce2dbb50/step/ \
+                                -d '{"action": 1}'
 ```
 ```json
 {
@@ -135,7 +143,9 @@ The artifacts generated through the monitor are available through port 8000.
 Start monitoring.
 
 ```bash
-curl -XPOST -H "Content-Type: application/json" http://localhost:5000/v1/envs/ce2dbb50/monitor/start/ -d '{"force": false, "resume": false}'
+➜  gym-server git:(master) ✗ curl -XPOST -H "Content-Type: application/json" \
+                       http://localhost:5000/v1/envs/ce2dbb50/monitor/start/ \
+                       -d '{"force": false, "resume": false}'
 {
   "message": true
 }%
@@ -146,7 +156,8 @@ curl -XPOST -H "Content-Type: application/json" http://localhost:5000/v1/envs/ce
 Stop monitoring.
 
 ```bash
-curl -XPOST -H "Content-Type: application/json" http://localhost:5000/v1/envs/ce2dbb50/monitor/stop/
+➜  gym-server git:(master) ✗ curl -XPOST -H "Content-Type: application/json" \
+                       http://localhost:5000/v1/envs/ce2dbb50/monitor/stop/
 {
   "message": true
 }%
@@ -157,7 +168,14 @@ curl -XPOST -H "Content-Type: application/json" http://localhost:5000/v1/envs/ce
 Upload results stored by the monitoring.
 
 ```bash
-curl -XPOST -H "Content-Type: application/json" http://localhost:5000/v1/envs/ce2dbb50/upload/ -d '{"algorithm_id": "my_id", "writeup": "http://mygist", "api_key": "my_apikey",_ "ignore_open_monitors": true}'
+➜  gym-server git:(master) ✗ curl -XPOST -H "Content-Type: application/json" \
+                           http://localhost:5000/v1/envs/ce2dbb50/upload/ -d \
+                           '{
+                              "algorithm_id": "my_id", 
+                              "writeup": "http://mygist", 
+                              "api_key": "my_apikey",
+                              "ignore_open_monitors": true
+                           }'
 {
   "message": true
 }%
@@ -168,7 +186,8 @@ curl -XPOST -H "Content-Type: application/json" http://localhost:5000/v1/envs/ce
 Provide some information about the environment, such as, action space and observation space.
 
 ```bash
-➜  gym-server git:(master) ✗ curl -XGET -H "Content-Type: application/json" http://localhost:5000/v1/envs/ce2dbb50/info
+➜  gym-server git:(master) ✗ curl -XGET -H "Content-Type: application/json" \
+                             http://localhost:5000/v1/envs/ce2dbb50/info
 {
   "action_space": "Discrete(2)",
   "observation_space": {
@@ -205,11 +224,11 @@ You can also access http://localhost:8000/render.html?instance_id=ce2dbb50, this
 
 * Provide API for getting statistics of simulation
 * Provide clients:
-    [ ] - scala (in progress)
-    [ ] - python
-    [ ] - java
-    [ ] - go
-    [ ] - want another one? You can also contribute ;)
+    - [ ] - scala (in progress)
+    - [ ] - python
+    - [ ] - java
+    - [ ] - go
+    - [ ] - want another one? You can also contribute ;)
 * Ideas? Create an issue!
 
 ## Contributing
