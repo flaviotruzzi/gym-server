@@ -138,3 +138,7 @@ You can also access http://192.168.99.100:8000, this is updated every 500ms show
 3. Commit your changes: `git commit -am 'Add some feature'`
 4. Push to the branch: `git push origin my-new-feature`
 5. Submit a pull request :D
+
+# Contributors
+
+- @catherio: idea of EnvironmentManager, and most of its implementation. Also a lot of influence on the api.
