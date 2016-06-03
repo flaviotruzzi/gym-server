@@ -7,7 +7,7 @@ RUN apt-get update -y
 RUN apt-get install -y python-pip python-dev build-essential         \
                        xvfb x11-xkb-utils xfonts-100dpi xfonts-75dpi \
                        xfonts-scalable xfonts-cyrillic x11-apps      \
-                       libjpeg-dev libpng12-dev python-opengl
+                       libjpeg-dev libpng12-dev python-opengl ffmpeg
 
 COPY . /app
 
