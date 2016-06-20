@@ -44,7 +44,7 @@ def reset(instance_id):
     :return: first observation
     """
     render = request.get_json().get('render')
-    return jsonify(observation=envs.reset(instance_id, render))
+    return jsonify(envs.reset(instance_id, render))
 
 
 @app.route('/v1/envs/<instance_id>/step/', methods=['POST'])
